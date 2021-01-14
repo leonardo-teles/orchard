@@ -10,6 +10,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.CreationTimestamp;
+
 @Entity
 @Table(name = "comments")
 public class Comment implements Serializable {
@@ -25,6 +27,7 @@ public class Comment implements Serializable {
 	@Column(columnDefinition = "text")
 	private String content;
 	
+	@CreationTimestamp
 	@Column(name = "posted_date")
 	private Date postedDate;
 

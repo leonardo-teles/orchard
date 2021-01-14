@@ -14,8 +14,14 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+
+import org.hibernate.annotations.CreationTimestamp;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonProperty.Access;
 
 @Entity
 @Table(name = "users")
@@ -24,14 +30,14 @@ public class User implements Serializable {
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
-	@Column(updatable = false, nullable = false)
 	private Integer id;
 	
 	private String name;
 	
-	@Column(unique = true)
+	@Column(unique = true, nullable = false)
 	private String username;
 	
+	@JsonProperty(access = Access.WRITE_ONLY)
 	private String password;
 	
 	private String email;
@@ -39,15 +45,19 @@ public class User implements Serializable {
 	@Column(columnDefinition = "text")
 	private String bio;
 	
+	@CreationTimestamp
+	@Column(name = "created_date")
 	private Date createdDate;
 	
 	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
 	private Set<UserRole> userRoles = new HashSet<>();
 	
 	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	@JoinColumn(name = "user_id")
 	private List<Post> posts = new ArrayList<>();
 	
 	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	@JoinColumn(name = "liked_user_id")
 	private List<Post> likedPosts = new ArrayList<>();
 	
 	public User() {}

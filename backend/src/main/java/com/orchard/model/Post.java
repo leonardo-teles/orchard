@@ -2,8 +2,10 @@ package com.orchard.model;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Stream;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -16,6 +18,10 @@ import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.CreationTimestamp;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 @Entity
 @Table(name = "posts")
 public class Post implements Serializable {
@@ -23,7 +29,6 @@ public class Post implements Serializable {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
-	@Column(updatable = false, nullable = false)
 	private Integer id;
 	
 	private String name;
@@ -35,8 +40,11 @@ public class Post implements Serializable {
 	
 	private int likes;
 	
+	@CreationTimestamp
+	@Column(name = "posted_date")
 	private Date postedDate;
 	
+	@Column(name = "user_image_id")
 	private Integer userImageId;
 	
 	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
@@ -45,8 +53,7 @@ public class Post implements Serializable {
 
 	public Post() {}
 
-	public Post(Integer id, String name, String caption, String location, int likes, Date postedDate,
-			Integer userImageId) {
+	public Post(Integer id, String name, String caption, String location, int likes, Date postedDate, Integer userImageId) {
 		this.id = id;
 		this.name = name;
 		this.caption = caption;
@@ -112,12 +119,19 @@ public class Post implements Serializable {
 		this.userImageId = userImageId;
 	}
 
-	public List<Comment> getCommentsList() {
-		return commentsList;
+	public Stream<Comment> getCommentsList() {
+		if (commentsList != null) {
+			return commentsList.stream().sorted(Comparator.comparing(Comment::getPostedDate));
+		}
+		
+		return null;		
 	}
 
-	public void setCommentsList(List<Comment> commentsList) {
-		this.commentsList = commentsList;
+	@JsonIgnore
+	public void setCommentsList(Comment comment) {
+		if (comment != null) {
+			this.commentsList.add(comment);			
+		}
 	}
 
 	@Override
