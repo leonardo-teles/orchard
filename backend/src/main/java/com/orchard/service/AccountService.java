@@ -21,7 +21,7 @@ public interface AccountService {
 	
 	public void updateUser(User user);
 	
-	public User findById(Long id);
+	public User findById(Integer id);
 	
 	public void deleteUser(User user);
 	
