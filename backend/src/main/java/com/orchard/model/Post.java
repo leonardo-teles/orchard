@@ -5,13 +5,30 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
+
+@Entity
+@Table(name = "posts")
 public class Post implements Serializable {
 	private static final long serialVersionUID = 1L;
 
+	@Id
+	@GeneratedValue(strategy = GenerationType.AUTO)
+	@Column(updatable = false, nullable = false)
 	private Integer id;
 	
 	private String name;
 	
+	@Column(columnDefinition = "text")
 	private String caption;
 	
 	private String location;
@@ -22,6 +39,8 @@ public class Post implements Serializable {
 	
 	private Integer userImageId;
 	
+	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+	@JoinColumn(name = "post_id")
 	private List<Comment> commentsList = new ArrayList<>();
 
 	public Post() {}

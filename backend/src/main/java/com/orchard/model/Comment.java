@@ -3,15 +3,29 @@ package com.orchard.model;
 import java.io.Serializable;
 import java.util.Date;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Table;
+
+@Entity
+@Table(name = "comments")
 public class Comment implements Serializable {
 	private static final long serialVersionUID = 1L;
 
+	@Id
+	@GeneratedValue(strategy = GenerationType.AUTO)
+	@Column(updatable = false, nullable = false)
 	private Integer id;
 	
 	private String username;
 	
+	@Column(columnDefinition = "text")
 	private String content;
 	
+	@Column(name = "posted_date")
 	private Date postedDate;
 
 	public Comment() {}
