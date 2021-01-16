@@ -29,5 +29,5 @@ public interface AccountService {
 	
 	public List<User> getUserListByUsername(String username);
 	
-	public void simpleSave(User user);
+	public User simpleSave(User user);
 }

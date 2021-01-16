@@ -42,4 +42,50 @@ public class EmailConstructor {
 		
 		return messagePreparator;
 	}
+	
+	public MimeMessagePreparator updateUserEmail(User user) {
+		Context context = new Context();
+		context.setVariable("user", user);
+
+		String html = template.process("email/updateUser", context);
+		
+		MimeMessagePreparator messagePreparator = new MimeMessagePreparator() {
+			
+			@Override
+			public void prepare(MimeMessage mimeMessage) throws Exception {
+				MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, MimeMessageHelper.MULTIPART_MODE_MIXED_RELATED, "UTF-8"); 
+				helper.setPriority(1);
+				helper.setTo(user.getEmail());
+				helper.setText(html, true);
+				helper.setSubject("Profile Update - Orchart");
+				helper.setFrom(new InternetAddress(env.getProperty("support.email")));
+			}
+		};
+		
+		return messagePreparator;
+	}
+	
+	public MimeMessagePreparator resetPasswordEmail(User user, String password) {
+		Context context = new Context();
+		context.setVariable("user", user);
+		context.setVariable("password", password);
+
+		String html = template.process("email/resetPassword", context);
+		
+		MimeMessagePreparator messagePreparator = new MimeMessagePreparator() {
+			
+			@Override
+			public void prepare(MimeMessage mimeMessage) throws Exception {
+				MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, MimeMessageHelper.MULTIPART_MODE_MIXED_RELATED, "UTF-8"); 
+				helper.setPriority(1);
+				helper.setTo(user.getEmail());
+				helper.setText(html, true);
+				helper.setSubject("New Password - Orchart");
+				helper.setFrom(new InternetAddress(env.getProperty("support.email")));
+			}
+		};
+		
+		return messagePreparator;
+	}
+	
 }
