@@ -1,13 +1,16 @@
 package com.orchard.service;
 
+import java.util.HashMap;
 import java.util.List;
+
+import org.springframework.web.multipart.MultipartFile;
 
 import com.orchard.model.Role;
 import com.orchard.model.User;
 
 public interface AccountService {
 
-	public void saveUser(User user);
+	public User saveUser(String name, String username, String email);
 	
 	public User findByUsername(String username);
 	
@@ -19,7 +22,11 @@ public interface AccountService {
 	
 	public Role saveRole(Role role);
 	
-	public void updateUser(User user);
+	public void updateUserPassword(User user, String newPassword);
+	
+	public User updateUser(User user, HashMap<String, String> request);
+	
+	public User simpleSave(User user);
 	
 	public User findById(Integer id);
 	
@@ -27,7 +34,8 @@ public interface AccountService {
 	
 	public void resetPassword(User user);
 	
-	public List<User> getUserListByUsername(String username);
+	public List<User> getUsersListByUsername(String username);
 	
-	public User simpleSave(User user);
+	public String saveUserImage(MultipartFile multipartFile, Integer userImageId);
+	
 }
