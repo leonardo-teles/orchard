@@ -6,6 +6,8 @@ import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.orchard.model.Role;
 import com.orchard.model.User;
@@ -14,6 +16,8 @@ import com.orchard.repository.UserRepository;
 import com.orchard.service.AccountService;
 import com.orchard.utility.EmailConstructor;
 
+@Service
+@Transactional
 public class AccountServiceImpl implements AccountService {
 
 	@Autowired
