@@ -148,8 +148,8 @@ public class User implements Serializable {
 		return likedPosts;
 	}
 
-	public void setLikedPosts(List<Post> likedPosts) {
-		this.likedPosts = likedPosts;
+	public void setLikedPosts(Post likedPosts) {
+		this.likedPosts.add(likedPosts);
 	}
 
 	@Override

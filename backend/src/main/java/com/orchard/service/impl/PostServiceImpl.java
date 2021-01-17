@@ -1,21 +1,18 @@
 package com.orchard.service.impl;
 
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
-
-import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import com.orchard.model.Post;
 import com.orchard.model.User;
@@ -76,20 +73,25 @@ public class PostServiceImpl implements PostService {
 	}
 
 	@Override
-	public String savePostImage(HttpServletRequest request, String fileName) {
-		MultipartHttpServletRequest multipartRequest = (MultipartHttpServletRequest) request;
-		Iterator<String> iterator = multipartRequest.getFileNames();
-		
-		MultipartFile multipartFile = multipartRequest.getFile(iterator.next());
+	public String savePostImage(MultipartFile multipartFile, String fileName) {
+		/*
+		 * MultipartHttpServletRequest multipartRequest = (MultipartHttpServletRequest)
+		 * request; Iterator<String> it = multipartRequest.getFileNames(); MultipartFile
+		 * multipartFile = multipartRequest.getFile(it.next());
+		 */
+		 
 		try {
 			byte[] bytes = multipartFile.getBytes();
 			Path path = Paths.get(Constants.POST_FOLDER + fileName + ".png");
 			Files.write(path, bytes, StandardOpenOption.CREATE);
-		} catch (Exception e) {
-			return "Error occured. Photo not saved";
+		} catch (IOException e) {
+			System.out.println("Error occured. Photo not saved!");
+			
+			return "Error occured. Photo not saved!";
 		}
+		System.out.println("Photo saved successfully!");
 		
-		return "Phato saved successfully";
+		return "Photo saved successfully!";
 	}
 
 }

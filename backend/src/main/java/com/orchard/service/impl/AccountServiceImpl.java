@@ -154,7 +154,7 @@ public class AccountServiceImpl implements AccountService {
 	}
 
 	@Override
-	public List<User> getUserListByUsername(String username) {
+	public List<User> getUsersListByUsername(String username) {
 		return userRepository.findByUsernameContainig(username);
 	}
 
