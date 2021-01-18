@@ -77,6 +77,7 @@ public class AccountServiceImpl implements AccountService {
 			e.printStackTrace();
 		}
 		mailSender.send(emailConstructor.newUserEmail(user, password));
+		
 		return user;
 	}	
 	
@@ -155,7 +156,7 @@ public class AccountServiceImpl implements AccountService {
 
 	@Override
 	public List<User> getUsersListByUsername(String username) {
-		return userRepository.findByUsernameContainig(username);
+		return userRepository.findByUsernameContaining(username);
 	}
 
 	@Override
