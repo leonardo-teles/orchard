@@ -34,7 +34,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 			authorities.add(new SimpleGrantedAuthority(userRoles.toString()));
 		});
 		
-		//left this just for not changind my model and the entire application
+		//left this just for not changing my model and the entire application. It'll be changing after I have the API finished
 		return new org.springframework.security.core.userdetails.User(user.getUsername(), user.getPassword(), authorities);
 	}
 
