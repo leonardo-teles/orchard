@@ -32,7 +32,7 @@ public class JwtAuthorization extends OncePerRequestFilter {
 		response.addHeader("Access-Control-Expose-Headers",
 				"Access-Control-Allow-Origin, " + "Access-Control-Allow-Credentials, " + "Authorization");
 
-		response.addHeader("Access-Control-Allow-Methods", "GET," + "POST, " + "DELETE" + "PUT");
+		response.addHeader("Access-Control-Allow-Methods", "GET," + "POST, " + "DELETE, " + "PUT");
 		
 		if (request.getMethod().equalsIgnoreCase("OPTIONS")) {
 			try {
@@ -42,7 +42,7 @@ public class JwtAuthorization extends OncePerRequestFilter {
 			}
 		} else {
 			String jwtToken = request.getHeader(SecurityConstants.HEADER_TYPE);
-			if (jwtToken != null && !jwtToken.startsWith(SecurityConstants.TOKEN_PREFIX)) {
+			if (jwtToken == null || !jwtToken.startsWith(SecurityConstants.TOKEN_PREFIX)) {
 				filterChain.doFilter(request, response);
 				
 				return;

@@ -18,6 +18,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
+import com.fasterxml.jackson.core.JsonParser.Feature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.orchard.model.User;
 
@@ -31,13 +32,16 @@ public class JwtAuthentication extends UsernamePasswordAuthenticationFilter {
 	
 	@Override
 	public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
-		User user = null;
+		ObjectMapper objectMapper = new ObjectMapper();
+		objectMapper.configure(Feature.AUTO_CLOSE_SOURCE, true);
+		
+		User user;
 		try {
-			user = new ObjectMapper().readValue(request.getInputStream(), User.class);
+			user = objectMapper.readValue(request.getInputStream(), User.class);
 		} catch (Exception e) {
 			e.printStackTrace();
 			
-			throw new RuntimeException("Unable to convert user from Json to Java Object");
+			throw new RuntimeException("Unable to convert user from Json to Java Object: " + e);
 		}
 		
 		return authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(user.getUsername(), user.getPassword()));
@@ -55,9 +59,9 @@ public class JwtAuthentication extends UsernamePasswordAuthenticationFilter {
 		});
 		
 		String jwtToken = JWT.create()
-				.withIssuer(request.getRequestURI())
+				.withIssuer("Orchard Company")
 				.withSubject(user.getUsername())
-				.withArrayClaim("roles", roles.toArray(new String[roles.size()]))
+				.withArrayClaim("roles", roles.stream().toArray(String[]::new))
 				.withExpiresAt(new Date(System.currentTimeMillis() + SecurityConstants.EXPIRATION_TIME))
 				.sign(Algorithm.HMAC256(SecurityConstants.SECRET));
 		response.addHeader(SecurityConstants.HEADER_TYPE, SecurityConstants.TOKEN_PREFIX + jwtToken);

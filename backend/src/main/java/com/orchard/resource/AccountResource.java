@@ -157,10 +157,4 @@ public class AccountResource {
 		return new ResponseEntity<String>("Email Sent!", HttpStatus.OK);
 	}
 
-
-	
-
-
-
-
 }

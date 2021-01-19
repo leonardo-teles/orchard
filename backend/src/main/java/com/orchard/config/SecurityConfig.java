@@ -34,7 +34,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	protected void configure(HttpSecurity http) throws Exception {
 		
 		JwtAuthentication jwtAuthentication = new JwtAuthentication(authenticationManager());
-		jwtAuthentication.setFilterProcessesUrl("/user/login");
+		jwtAuthentication.setFilterProcessesUrl(PUBLIC_MATCHERS[0]);
 		
 		http
 			.csrf().disable()
