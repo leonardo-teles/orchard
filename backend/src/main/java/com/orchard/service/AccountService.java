@@ -6,36 +6,35 @@ import java.util.List;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.orchard.model.Role;
-import com.orchard.model.User;
+import com.orchard.model.AppUser;
 
 public interface AccountService {
 
-	public User saveUser(String name, String username, String email);
-	
-	public User findByUsername(String username);
-	
-	public User findByEmail(String email);
-	
-	public List<User> userList();
-	
-	public Role findUserRoleByName(String role);
-	
+	public AppUser saveUser(String name, String username, String email);
+
+	public AppUser findByUsername(String username);
+
+	public AppUser findByEmail(String userEmail);
+
+	public List<AppUser> userList();
+
+	public Role findUserRoleByName(String string);
+
 	public Role saveRole(Role role);
+
+	public void updateUserPassword(AppUser appUser, String newpassword);
 	
-	public void updateUserPassword(User user, String newPassword);
+	public AppUser updateUser(AppUser user, HashMap<String, String> request);
+
+	public AppUser simpleSaveUser(AppUser user);
+
+	public AppUser findUserById(Integer id);
 	
-	public User updateUser(User user, HashMap<String, String> request);
-	
-	public User simpleSave(User user);
-	
-	public User findById(Integer id);
-	
-	public void deleteUser(User user);
-	
-	public void resetPassword(User user);
-	
-	public List<User> getUsersListByUsername(String username);
-	
+	public void deleteUser(AppUser appUser);
+
+	public void resetPassword(AppUser user);
+
+	public List<AppUser> getUsersListByUsername(String username);
+
 	public String saveUserImage(MultipartFile multipartFile, Integer userImageId);
-	
 }

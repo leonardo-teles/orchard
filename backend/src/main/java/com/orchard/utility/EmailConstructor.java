@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 
-import com.orchard.model.User;
+import com.orchard.model.AppUser;
 
 @Component
 public class EmailConstructor {
@@ -22,7 +22,7 @@ public class EmailConstructor {
 	@Autowired
 	private TemplateEngine template;
 	
-	public MimeMessagePreparator newUserEmail(User user, String password) {
+	public MimeMessagePreparator newUserEmail(AppUser user, String password) {
 		Context context = new Context();
 		context.setVariable("user", user);
 		context.setVariable("password", password);
@@ -45,7 +45,7 @@ public class EmailConstructor {
 		return messagePreparator;
 	}
 	
-	public MimeMessagePreparator updateUserEmail(User user) {
+	public MimeMessagePreparator updateUserEmail(AppUser user) {
 		Context context = new Context();
 		context.setVariable("user", user);
 
@@ -67,7 +67,7 @@ public class EmailConstructor {
 		return messagePreparator;
 	}
 	
-	public MimeMessagePreparator resetPasswordEmail(User user, String password) {
+	public MimeMessagePreparator resetPasswordEmail(AppUser user, String password) {
 		Context context = new Context();
 		context.setVariable("user", user);
 		context.setVariable("password", password);

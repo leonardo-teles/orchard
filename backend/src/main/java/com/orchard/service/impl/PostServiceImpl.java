@@ -15,7 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.orchard.model.Post;
-import com.orchard.model.User;
+import com.orchard.model.AppUser;
 import com.orchard.repository.PostRepository;
 import com.orchard.service.PostService;
 import com.orchard.utility.Constants;
@@ -28,7 +28,7 @@ public class PostServiceImpl implements PostService {
 	private PostRepository postRepository;
 	
 	@Override
-	public Post savePost(User user, HashMap<String, String> request, String postImageName) {
+	public Post savePost(AppUser user, HashMap<String, String> request, String postImageName) {
 		String caption =  request.get("caption");
 		String location =  request.get("location");
 		
@@ -74,12 +74,6 @@ public class PostServiceImpl implements PostService {
 
 	@Override
 	public String savePostImage(MultipartFile multipartFile, String fileName) {
-		/*
-		 * MultipartHttpServletRequest multipartRequest = (MultipartHttpServletRequest)
-		 * request; Iterator<String> it = multipartRequest.getFileNames(); MultipartFile
-		 * multipartFile = multipartRequest.getFile(it.next());
-		 */
-		 
 		try {
 			byte[] bytes = multipartFile.getBytes();
 			Path path = Paths.get(Constants.POST_FOLDER + fileName + ".png");
@@ -93,5 +87,4 @@ public class PostServiceImpl implements PostService {
 		
 		return "Photo saved successfully!";
 	}
-
 }

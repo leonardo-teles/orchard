@@ -17,11 +17,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.orchard.model.AppUser;
 import com.orchard.model.Role;
-import com.orchard.model.User;
 import com.orchard.model.UserRole;
+import com.orchard.repository.AppUserRepository;
 import com.orchard.repository.RoleRepository;
-import com.orchard.repository.UserRepository;
 import com.orchard.service.AccountService;
 import com.orchard.utility.Constants;
 import com.orchard.utility.EmailConstructor;
@@ -31,13 +31,13 @@ import com.orchard.utility.EmailConstructor;
 public class AccountServiceImpl implements AccountService {
 	
 	@Autowired
-	private AccountService accountService;
+	AccountService accountService;
 
 	@Autowired
 	private BCryptPasswordEncoder encoder;
 	
 	@Autowired
-	private UserRepository userRepository;
+	private AppUserRepository userRepository;
 	
 	@Autowired
 	private RoleRepository roleRepository;
@@ -50,56 +50,46 @@ public class AccountServiceImpl implements AccountService {
 	
 	@Override
 	@Transactional
-	public User saveUser(String name, String username, String email) {
-		
+	public AppUser saveUser(String name, String username, String email) {
 		String password = RandomStringUtils.randomAlphanumeric(10);
 		String encryptedPassword = encoder.encode(password);
 		
-		User user = new User();
-		user.setPassword(encryptedPassword);
-		user.setName(name);
-		user.setUsername(username);
-		user.setEmail(email);
+		AppUser appUser = new AppUser();
+		appUser.setPassword(encryptedPassword);
+		appUser.setName(name);
+		appUser.setUsername(username);
+		appUser.setEmail(email);
 		
 		Set<UserRole> userRoles = new HashSet<>();
-		userRoles.add(new UserRole(user, accountService.findUserRoleByName("USER")));
-		user.setUserRoles(userRoles);
 		
-		userRepository.save(user);
+		userRoles.add(new UserRole(appUser, accountService.findUserRoleByName("USER")));
+		appUser.setUserRoles(userRoles);
+		
+		userRepository.save(appUser);
+		
 		byte[] bytes;
 		
 		try {
 			bytes = Files.readAllBytes(Constants.TEMP_USER.toPath());
-			String fileName = user.getId() + ".png";
+			String fileName = appUser.getId() + ".png";
 			Path path = Paths.get(Constants.USER_FOLDER + fileName);
 			Files.write(path, bytes);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		mailSender.send(emailConstructor.newUserEmail(user, password));
+		mailSender.send(emailConstructor.newUserEmail(appUser, password));
 		
-		return user;
-	}	
-	
-
-	@Override
-	public User findByUsername(String username) {
-		return userRepository.findByUsername(username);
+		return appUser;
 	}
 
 	@Override
-	public User findByEmail(String email) {
-		return userRepository.findByEmail(email);
-	}
-
-	@Override
-	public List<User> userList() {
-		return userRepository.findAll();
-	}
-
-	@Override
-	public Role findUserRoleByName(String name) {
-		return roleRepository.findRoleByName(name);
+	public void updateUserPassword(AppUser appUser, String newpassword) {
+		String encryptedPassword = encoder.encode(newpassword);
+		appUser.setPassword(encryptedPassword);
+		
+		userRepository.save(appUser);
+		
+		mailSender.send(emailConstructor.resetPasswordEmail(appUser, newpassword));
 	}
 
 	@Override
@@ -108,63 +98,73 @@ public class AccountServiceImpl implements AccountService {
 	}
 	
 	@Override
-	public User updateUser(User user, HashMap<String, String> request) {
+	public AppUser findByUsername(String username) {
+		return userRepository.findByUsername(username);
+	}
+
+	@Override
+	public AppUser findByEmail(String userEmail) {
+		return userRepository.findByEmail(userEmail);
+	}
+
+	@Override
+	public List<AppUser> userList() {
+		return userRepository.findAll();
+	}
+
+	@Override
+	public Role findUserRoleByName(String name) {
+		return roleRepository.findRoleByName(name);
+	}
+	
+	@Override
+	public AppUser simpleSaveUser(AppUser user) {
+		userRepository.save(user);
+		mailSender.send(emailConstructor.updateUserEmail(user));
+		
+		return user;
+	}
+
+	@Override
+	public AppUser updateUser(AppUser user, HashMap<String, String> request) {
 		String name = request.get("name");
 		String email = request.get("email");
 		String bio = request.get("bio");
+
 		user.setName(name);
 		user.setEmail(email);
 		user.setBio(bio);
 
 		userRepository.save(user);
-		
 		mailSender.send(emailConstructor.updateUserEmail(user));
 		
 		return user;
 	}
 	
 	@Override
-	public void updateUserPassword(User user, String newPassword) {
-		String encryptedPassword = encoder.encode(newPassword);
-		user.setPassword(encryptedPassword);
-		
-		userRepository.save(user);
-		
-		mailSender.send(emailConstructor.resetPasswordEmail(user, newPassword));
-	}
-
-	@Override
-	public User findById(Integer id) {
+	public AppUser findUserById(Integer id) {
 		return userRepository.findUserById(id);
 	}
 
 	@Override
-	public void deleteUser(User user) {
-		userRepository.delete(user);
+	public void deleteUser(AppUser appUser) {
+		userRepository.delete(appUser);
+
 	}
 
 	@Override
-	public void resetPassword(User user) {
+	public void resetPassword(AppUser user) {
 		String password = RandomStringUtils.randomAlphanumeric(10);
 		String encryptedPassword = encoder.encode(password);
 		user.setPassword(encryptedPassword);
 		
 		userRepository.save(user);
-		
 		mailSender.send(emailConstructor.resetPasswordEmail(user, password));
 	}
 
 	@Override
-	public List<User> getUsersListByUsername(String username) {
+	public List<AppUser> getUsersListByUsername(String username) {
 		return userRepository.findByUsernameContaining(username);
-	}
-
-	@Override
-	public User simpleSave(User user) {
-		userRepository.save(user);
-		mailSender.send(emailConstructor.updateUserEmail(user));
-		
-		return user;
 	}
 
 	@Override
@@ -179,7 +179,7 @@ public class AccountServiceImpl implements AccountService {
 			
 			return "User picture saved to server";
 		} catch (IOException e) {
-			return "User picture saved";
+			return "User picture Saved";
 		}
 	}
 }

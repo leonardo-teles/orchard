@@ -25,7 +25,7 @@ import com.fasterxml.jackson.annotation.JsonProperty.Access;
 
 @Entity
 @Table(name = "users")
-public class User implements Serializable {
+public class AppUser implements Serializable {
 	private static final long serialVersionUID = 1L;
 	
 	@Id
@@ -49,7 +49,7 @@ public class User implements Serializable {
 	@Column(name = "created_date")
 	private Date createdDate;
 	
-	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+	@OneToMany(mappedBy = "appUser", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
 	private Set<UserRole> userRoles = new HashSet<>();
 	
 	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
@@ -60,9 +60,9 @@ public class User implements Serializable {
 	@JoinColumn(name = "liked_user_id")
 	private List<Post> likedPosts = new ArrayList<>();
 	
-	public User() {}
+	public AppUser() {}
 
-	public User(Integer id, String name, String username, String password, String email, String bio, Date createdDate) {
+	public AppUser(Integer id, String name, String username, String password, String email, String bio, Date createdDate) {
 		this.id = id;
 		this.name = name;
 		this.username = username;
@@ -168,7 +168,7 @@ public class User implements Serializable {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		User other = (User) obj;
+		AppUser other = (AppUser) obj;
 		if (id == null) {
 			if (other.id != null)
 				return false;

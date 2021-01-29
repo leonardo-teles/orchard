@@ -6,11 +6,11 @@ import java.util.List;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.orchard.model.Post;
-import com.orchard.model.User;
+import com.orchard.model.AppUser;
 
 public interface PostService {
 
-	public Post savePost(User user, HashMap<String, String> request, String postImageName);
+	public Post savePost(AppUser user, HashMap<String, String> request, String postImageName);
 	
 	public List<Post> postList();
 	

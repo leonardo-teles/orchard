@@ -25,7 +25,7 @@ public class UserRole implements Serializable {
 	@ManyToOne
 	@JoinColumn(name = "user_id")
 	@JsonIgnore
-	private User user;
+	private AppUser appUser;
 	
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "role_id")
@@ -33,14 +33,14 @@ public class UserRole implements Serializable {
 
 	public UserRole() {}
 	
-	public UserRole(Integer id, User user, Role role) {
+	public UserRole(Integer id, AppUser appUser, Role role) {
 		this.id = id;
-		this.user = user;
+		this.appUser = appUser;
 		this.role = role;
 	}
 
-	public UserRole(User user, Role role) {
-		this.user = user;
+	public UserRole(AppUser appUser, Role role) {
+		this.appUser = appUser;
 		this.role = role;
 	}
 
@@ -52,12 +52,12 @@ public class UserRole implements Serializable {
 		this.id = id;
 	}
 
-	public User getUser() {
-		return user;
+	public AppUser getAppUser() {
+		return appUser;
 	}
 
-	public void setUser(User user) {
-		this.user = user;
+	public void setAppUser(AppUser appUser) {
+		this.appUser = appUser;
 	}
 
 	public Role getRole() {

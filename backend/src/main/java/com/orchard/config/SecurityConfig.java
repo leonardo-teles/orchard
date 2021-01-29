@@ -16,7 +16,6 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
 	private static final String[] PUBLIC_MATCHERS = {"/user/login", "/user/register", "/user/resetPassword/**", "/image/**"};
-	//private static final String[] PUBLIC_MATCHERS = {"/**"};
 	
 	@Autowired
 	private UserDetailsService userDetailsService;
@@ -26,8 +25,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	
 	@Override
 	protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-		auth.userDetailsService(userDetailsService)
-			.passwordEncoder(encoder);
+		auth.userDetailsService(userDetailsService).passwordEncoder(encoder);
 	}
 	
 	@Override

@@ -14,13 +14,14 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.fasterxml.jackson.core.JsonParser.Feature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.orchard.model.User;
+import com.orchard.model.AppUser;
 
 public class JwtAuthentication extends UsernamePasswordAuthenticationFilter {
 	
@@ -35,35 +36,34 @@ public class JwtAuthentication extends UsernamePasswordAuthenticationFilter {
 		ObjectMapper objectMapper = new ObjectMapper();
 		objectMapper.configure(Feature.AUTO_CLOSE_SOURCE, true);
 		
-		User user;
+		AppUser appUser;
+		
 		try {
-			user = objectMapper.readValue(request.getInputStream(), User.class);
+			appUser = objectMapper.readValue(request.getInputStream(), AppUser.class);
 		} catch (Exception e) {
 			e.printStackTrace();
-			
-			throw new RuntimeException("Unable to convert user from Json to Java Object: " + e);
+			throw new RuntimeException("Unable to convert Json into Java Object: " + e);
 		}
-		
-		return authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(user.getUsername(), user.getPassword()));
+		return authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(appUser.getUsername(), appUser.getPassword()));
 	}
 	
 	@Override
-	protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authResult) throws IOException, ServletException {
-		
-		//left this just for not changing my model and the entire application. It'll be changing after I have the API finished
-		org.springframework.security.core.userdetails.User user = (org.springframework.security.core.userdetails.User) authResult.getPrincipal();
-		
+	protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authentication) throws IOException, ServletException {
+		User user = (User) authentication.getPrincipal();
 		List<String> roles = new ArrayList<>();
-		user.getAuthorities().forEach(authority -> {
-			roles.add(authority.getAuthority());
-		});
+		
+		user.getAuthorities()
+				.forEach(authority -> {
+					roles.add(authority.getAuthority());
+				});
 		
 		String jwtToken = JWT.create()
 				.withIssuer("Orchard Company")
 				.withSubject(user.getUsername())
 				.withArrayClaim("roles", roles.stream().toArray(String[]::new))
-				.withExpiresAt(new Date(System.currentTimeMillis() + SecurityConstants.EXPIRATION_TIME))
+				.withExpiresAt(new Date (System.currentTimeMillis()+SecurityConstants.EXPIRATION_TIME))
 				.sign(Algorithm.HMAC256(SecurityConstants.SECRET));
-		response.addHeader(SecurityConstants.HEADER_TYPE, SecurityConstants.TOKEN_PREFIX + jwtToken);
+		response.addHeader(SecurityConstants.HEADER_TYPE, SecurityConstants.TOKEN_PREFIX+jwtToken);
 	}
+
 }
