@@ -47,7 +47,7 @@ export class PostService {
 
   // tslint:disable-next-line: typedef
   unLike(postId: number, username: string) {
-      return this.http.post(`${this.host}/post/unLike/`,{ postId, username }, {
+      return this.http.post(`${this.host}/post/unLike/`, { postId, username }, {
         responseType: 'text'
       });
   }
