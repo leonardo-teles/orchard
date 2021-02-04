@@ -12,7 +12,7 @@ export class PostresolverService implements Resolve<Post>{
   constructor(private postService: PostService) { }
 
   resolve(route: ActivatedRouteSnapshot): Observable<Post> {
-    const postId: number = route.params['postId'];
+    const postId: number = route.params.postId;
 
     return this.postService.getOnePostById(postId);
   }
