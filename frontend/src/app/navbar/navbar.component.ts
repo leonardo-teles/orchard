@@ -104,9 +104,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
   }
 
   onNewPost(post: Post): void {
-    const element: HTMLElement = document.getElementById(
-      'dismissOnSubmitPost'
-    ) as HTMLElement;
+    const element: HTMLElement = document.getElementById('dismissOnSubmitPost') as HTMLElement;
     element.click();
     this.loadingService.isLoading.next(true);
     this.subscriptions.push(
