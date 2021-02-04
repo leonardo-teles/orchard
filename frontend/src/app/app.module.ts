@@ -9,6 +9,18 @@ import { HomeComponent } from './home/home.component';
 import { ProfileComponent } from './profile/profile.component';
 import { NavbarComponent } from './navbar/navbar.component';
 import { PostDetailComponent } from './post-detail/post-detail.component';
+import { Routes } from '@angular/router';
+
+const appRoutes: Routes = [
+  { path: 'login', component: LoginComponent},
+  { path: 'signup', component: SignupComponent },
+  { path: 'resetpassword', component: ResetPasswordComponent },
+  { path: 'home', component: HomeComponent, canActivate: [AuthenticationGuard] },
+  { path: 'post/:postId', component: PostDetailComponent,
+           resolve: {resolvedPost: PostresolverService}, canActivate: [AuthenticationGuard] },
+  { path: 'profile/:username', component: ProfileComponent, canActivate: [AuthenticationGuard] },
+  { path: '', redirectTo: '/home', pathMatch: 'full' }
+];
 
 @NgModule({
   declarations: [
